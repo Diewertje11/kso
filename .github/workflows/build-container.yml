@@ -4,10 +4,20 @@ on:
     branches:
       - master
       - dev
-  pull_request:
+    paths:
+      - Dockerfile
+      - kso_utils/requirements
+      - yolov5_tracker/requirements
+      - yolov5/requirements
+  pull_request: 
     branches:
       - master
       - dev
+    paths:
+      - Dockerfile
+      - kso_utils/requirements
+      - yolov5_tracker/requirements
+      - yolov5/requirements
 
 jobs:
   build-and-push-image:
@@ -35,4 +45,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: 'ghcr.io/${{ github.repository }}:test'
+          tags: 'ghcr.io/${{ github.repository }}:${{ github.event.sha }}'
+          # As tag we use the sha, which is the code of the MR-commit-code that is made to merge the last commit into dev. If the NB-tests pass and the events got triggered by a push, then this tag will be changed to dev or master. This is done in 'update-container.yml'
