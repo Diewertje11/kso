@@ -1,12 +1,9 @@
 name: part3
 on:
   push: 
-    branches:
-      - master
-      - dev
-  #workflow_run:
-  #  workflows: [part2]
-  #  types: [completed]
+  workflow_run:
+    workflows: [part2]
+    types: [completed]
 jobs:
   part3:
     runs-on: ubuntu-latest
@@ -18,28 +15,20 @@ jobs:
         name: if the workflow was successfull, then check if the docker exists, if so, upload
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         run: echo 'tests were successfull'
-      - name: Show GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
       -
         name: print last commit code    
-        run: |
-          echo 'here comes the commit code' 
-          echo 'github.event.head_commit.id'
-          echo 'second try'
-          echo '$github.event.head_commit.id'
-          echo 'third try'
-          echo '${{ github.event.head_commit.id }}' # the commit code of the last commit
+        run: echo '${{ github.event.sha }}' # the SHA code, which is the code of the MR-commit-code that is made to merge the last commit into dev. 
       -
         name: Check docker exists, first get tag list
         run: |
              curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/USER/IMAGE/tags/list    
         
-     # - name: Delete image from ghcr.io
-     #   needs: Check docker exists
-     #   uses: chipkent/action-cleanup-package@v1.0.1
-     #   with:
-     #     package-name: ${{ github.event.repository.name }}
-     #     tag: pr-${{ github.event.pull_request.number }}
-     #     github-token: ${{ secrets.CI_ACTION_TOKEN }}
+      - name: Delete image from ghcr.io
+        needs: Check docker exists
+        uses: chipkent/action-cleanup-package@v1.0.1
+        with:
+          package-name: ${{ github.event.repository.name }}
+          tag: sha-${{ github.sha }}
+          github-token: ${{ secrets.CI_ACTION_TOKEN }}
+          
+# 
