@@ -18,10 +18,14 @@ jobs:
         name: print last commit code    
         run: echo '${{ github.event.sha }}' # the SHA code, which is the code of the MR-commit-code that is made to merge the last commit into dev. 
       -
-        name: Check docker exists, first get tag list
+        name: Check docker exists, old code
         run: |
              curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/USER/IMAGE/tags/list    
-        
+             'ghcr.io/${{ github.repository }}:test5/tags/list'
+      -
+        name: Check docker exists, new
+        run: |
+             curl -H "Authorization: Bearer ${secrets.GITHUB_TOKEN}" https://ghcr.io/${{ github.repository }}/tags/list  
       - 
         name: print push and head_branch
         run: |
