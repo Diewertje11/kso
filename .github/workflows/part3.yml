@@ -21,7 +21,6 @@ jobs:
         name: Check docker exists, old code
         run: |
              curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/USER/IMAGE/tags/list    
-             'ghcr.io/${{ github.repository }}:test5/tags/list'
       -
         name: Check docker exists, new
         run: |
