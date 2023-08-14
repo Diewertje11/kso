@@ -24,7 +24,7 @@ jobs:
              curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/USER/IMAGE/tags/list    
         
       - name: Delete image from ghcr.io
-        needs: Check docker exists
+        #needs: Check docker exists
         uses: chipkent/action-cleanup-package@v1.0.1
         with:
           package-name: ${{ github.event.repository.name }}
