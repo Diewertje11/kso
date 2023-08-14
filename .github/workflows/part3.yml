@@ -14,6 +14,10 @@ jobs:
         name: if the workflow was successfull, then check if the docker exists, if so, upload
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         run: echo 'tests were successfull'
+      - name: Show GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       -
         name: print last commit code    
         run: |
