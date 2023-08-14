@@ -1,8 +1,12 @@
 name: part3
 on:
-  workflow_run:
-    workflows: [part2]
-    types: [completed]
+  pull_request: 
+    branches:
+      - master
+      - dev
+  #workflow_run:
+  #  workflows: [part2]
+  #  types: [completed]
 jobs:
   part3:
     runs-on: ubuntu-latest
