@@ -1,6 +1,5 @@
 name: part3
 on:
-  push: 
   workflow_run:
     workflows: [part2]
     types: [completed]
@@ -23,12 +22,24 @@ jobs:
         run: |
              curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/USER/IMAGE/tags/list    
         
-      - name: Delete image from ghcr.io
+      - 
+        name: print push and head_branch
+        run: |
+             echo '${{ github.event.workflow_run.event }}'
+             echo '${{ github.event.workflow_run.event.head_branch
+     # - name: Delete image from ghcr.io
         #needs: Check docker exists
-        uses: chipkent/action-cleanup-package@v1.0.1
-        with:
-          package-name: ${{ github.event.repository.name }}
-          tag: sha-${{ github.sha }}
-          github-token: ${{ secrets.CI_ACTION_TOKEN }}
+      #  uses: chipkent/action-cleanup-package@v1.0.1
+      #  with:
+      #    package-name: ${{ github.event.repository.name }}
+      #    tag: sha-${{ github.sha }}
+      #    github-token: ${{ secrets.CI_ACTION_TOKEN }}
           
-# 
+# steps:
+# check if docker exists
+# needs check, if tests successfull, and if we push to dev or master, than change tag
+# needs check, if not previous step, then delete the docker image. 
+
+
+# To check if the event is a push: github.event.workflow_run.event == 'push'
+# To get if it is to dev or master: github.event.workflow_run.event.head_branch
