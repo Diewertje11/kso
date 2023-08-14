@@ -26,7 +26,7 @@ jobs:
         name: print push and head_branch
         run: |
              echo '${{ github.event.workflow_run.event }}'
-             echo '${{ github.event.workflow_run.event.head_branch
+             echo '${{ github.event.workflow_run.event.head_branch }}'
      # - name: Delete image from ghcr.io
         #needs: Check docker exists
       #  uses: chipkent/action-cleanup-package@v1.0.1
