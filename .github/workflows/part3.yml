@@ -1,6 +1,6 @@
 name: part3
 on:
-  pull_request: 
+  push: 
     branches:
       - master
       - dev
