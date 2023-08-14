@@ -16,7 +16,9 @@ jobs:
         run: echo 'tests were successfull'
       -
         name: print last commit code    
-        run: echo ${{ github.event.after }} # the commit code of the last commit
+        run: |
+          echo 'here comes the commit code' 
+          echo ${{ github.event.after }} # the commit code of the last commit
       -
         name: Check docker exists, first get tag list
         run: |
