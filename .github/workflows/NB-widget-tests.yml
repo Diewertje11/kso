@@ -61,7 +61,7 @@ jobs:
       options: --user ${{ needs.configure.outputs.uid_gid }}
       credentials:
         username: '${{ github.actor }}'
-        password: '${{ secrets.GHCR_TOKEN }}'
+        password: '${{ secrets.GITHUB_TOKEN }}'
     permissions:
       contents: read
       packages: write
