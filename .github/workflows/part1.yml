@@ -29,7 +29,8 @@ jobs:
         name: who are we
         run: "uname -a && id && cat /etc/os-release && env"
         shell: bash
-      -
-        name: print last commit code    
-        run: echo ${{ github.event.after }} # the commit code of the last commit
+      - name: Show GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
   
