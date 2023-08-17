@@ -46,8 +46,10 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_run" ] ; then 
             echo "tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
-          else 
+          elif [ "${{ github.event_name }}" = "pull_request" ] ; then 
             echo "tag=${{ github.base_ref }}" >> "$GITHUB_OUTPUT" 
+          elif [ "${{ github.event_name }}" = "push" ] ; then 
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT" 
           fi 
         shell: bash
 
