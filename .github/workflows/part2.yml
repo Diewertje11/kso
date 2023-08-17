@@ -40,15 +40,19 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
-  test-if:
-    if: github.event_name in ['push','pull_request'] #) or (github.event_name == 'pull_request')
-    runs-on: ubuntu-latest
-    steps:
-      - name: test-if for push or pull request    
-        run: echo 'lala'
-  test-if-workflow:
-    if: github.event_name == 'workflow_run'
-    runs-on: ubuntu-latest
-    steps:
-      - name: test-if on workflow run   
-        run: echo 'lala'
+      - name: Check docker exists Pablo get list (2nd time to see if deleted)
+        run: |
+          GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
+          curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/ocean-data-factory-sweden/kso/tags/list
+  #test-if:
+  #  if: github.event_name in ['push','pull_request'] #) or (github.event_name == 'pull_request')
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: test-if for push or pull request    
+  #      run: echo 'lala'
+  #test-if-workflow:
+  #  if: github.event_name == 'workflow_run'
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: test-if on workflow run   
+  #      run: echo 'lala'
