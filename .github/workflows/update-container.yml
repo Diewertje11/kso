@@ -26,7 +26,7 @@ jobs:
           GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
           curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/ocean-data-factory-sweden/kso/tags/list
       - name: update-tag
-        if: steps.tag-exists.outcome == 'success' && github.event.workflow_run.conclusion == 'success' && # github.event.workflow_run.event == 'push' # For testing this is turned off, should be here
+        if: (steps.tag-exists.outcome == 'success' && github.event.workflow_run.conclusion == 'success') #&&  github.event.workflow_run.event == 'push' # For testing this is turned off, should be here
         run: |
           GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
           # To pull manifest
