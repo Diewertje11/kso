@@ -1,0 +1,50 @@
+# Ideally, we would only want this workflow to run when both build-container and NB-widget-tests have succeeded. However, it is not possible yet in github ci to make a workflow dependent on 2 other workflows. (see: https://stackoverflow.com/questions/75584775/trigger-a-github-workflow-if-two-other-workflows-have-been-successful#:~:text=If%20you%20specify%20multiple%20workflows%20for%20the%20workflow_run,Main%20Pipeline%22%20or%20%22Frontend%20Main%20Pipeline%22%20have%20completed. )
+# Therefore, we use the following logic: 
+# -> Check if a docker file with the tag of the sha-code exists. 
+#       -> yes, and if the tests were successfull: update this tag to dev or master if we push to one of these branches. If not: we would idealy delete the tag (and with that automatically the docker layers that are unique to this tag), but for this we need different permission. A separate issue is created for this. For now the tags will just stay around and can be manually deleted once in a while.
+#       -> No, simply print: No new container was created during the ci-pipeline. 
+name: update-container
+on:
+  workflow_run:
+    workflows: [NB-widget-tests]
+    types: [completed]
+jobs:
+  update-container:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: sha-tag-exists
+        id: sha-tag-exists
+        run: |
+          GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
+          curl --head --fail -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/ocean-data-factory-sweden/kso/manifests/${{ github.sha }}
+        continue-on-error: true
+      - name: show list of tags (JUST CHECK, REMOVE LATER)
+        run: |
+          GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
+          curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/ocean-data-factory-sweden/kso/tags/list
+      - name: update-tag
+        if: steps.tag-exists.outcome == 'success'
+        if: github.event.workflow_run.conclusion == 'success'
+        #if: github.event.workflow_run.event == 'push' # For testing this is turned off, should be here
+        run: |
+          GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
+          # To pull manifest
+          OLD_TAG=${{ github.sha }}
+          MANIFEST=$(curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/ocean-data-factory-sweden/kso/manifests/$OLD_TAG)
+          # To push a new tag
+          CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
+          NEW_TAG=${{ github.event.workflow_run.head_branch }}
+          curl -f -X PUT -H "Content-Type: ${CONTENT_TYPE}" -H "Authorization: Bearer ${GHCR_TOKEN}"  -d "${MANIFEST}" "https://ghcr.io/v2/ocean-data-factory-sweden/kso/manifests/$NEW_TAG"
+      #- name: delete-tag
+      #  if: steps.tag-exists.outcome == 'success'
+      #  run : # Permissions should be changed for this
+      - name: show list of tags (JUST CHECK, REMOVE LATER)
+        run: |
+          GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
+          curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/ocean-data-factory-sweden/kso/tags/list
+      - name: no-new-container
+        if: steps.tag-exists.outcome == 'failure'
+        run: echo 'No new container was created during this pipeline'
