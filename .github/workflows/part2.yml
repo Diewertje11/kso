@@ -40,3 +40,15 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
+  test-if:
+    if: (github.event_name == 'push') or (github.event_name == 'pull_request')
+    runs-on: ubuntu-latest
+    steps:
+      - name: test-if for push or pull request    
+        run: echo 'lala'
+  test-if-workflow:
+    if: github.event_name == 'workflow_run'
+    runs-on: ubuntu-latest
+    steps:
+      - name: test-if on workflow run   
+        run: echo 'lala'
