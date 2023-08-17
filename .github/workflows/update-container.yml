@@ -26,7 +26,7 @@ jobs:
           GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
           curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/ocean-data-factory-sweden/kso/tags/list
       - name: update-tag
-        if: (steps.tag-exists.outcome == 'success' && github.event.workflow_run.conclusion == 'success') #&&  github.event.workflow_run.event == 'push' # For testing this is turned off, should be here
+        if: (steps.sha-tag-exists.outcome == 'success' && github.event.workflow_run.conclusion == 'success') #&&  github.event.workflow_run.event == 'push' # For testing this is turned off, should be here
         run: |
           GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
           # To pull manifest
@@ -37,12 +37,12 @@ jobs:
           NEW_TAG=${{ github.event.workflow_run.head_branch }}
           curl -f -X PUT -H "Content-Type: ${CONTENT_TYPE}" -H "Authorization: Bearer ${GHCR_TOKEN}"  -d "${MANIFEST}" "https://ghcr.io/v2/ocean-data-factory-sweden/kso/manifests/$NEW_TAG"
       #- name: delete-tag
-      #  if: steps.tag-exists.outcome == 'success'
+      #  if: steps.sha-tag-exists.outcome == 'success'
       #  run : # Permissions should be changed for this
       - name: show list of tags (JUST CHECK, REMOVE LATER)
         run: |
           GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
           curl -H "Authorization: Bearer ${GHCR_TOKEN}" https://ghcr.io/v2/ocean-data-factory-sweden/kso/tags/list
       - name: no-new-container
-        if: steps.tag-exists.outcome == 'failure'
+        if: steps.sha-tag-exists.outcome == 'failure'
         run: echo 'No new container was created during this pipeline'
