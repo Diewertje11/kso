@@ -41,7 +41,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
   test-if:
-    if: (github.event_name == 'push') or (github.event_name == 'pull_request')
+    if: github.event_name == 'push' #) or (github.event_name == 'pull_request')
     runs-on: ubuntu-latest
     steps:
       - name: test-if for push or pull request    

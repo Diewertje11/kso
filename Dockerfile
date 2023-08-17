@@ -63,7 +63,7 @@ RUN adduser --disabled-password \
 	jupyter nbextension enable --user --py widgetsnbextension && \ 
 	jupyter nbextension enable --user --py jupyter_bbox_widget
 
-#
+##
 # --- Make sure that the contents of our repo are in ${HOME} ---
 COPY . ${HOME} 
 USER root 
